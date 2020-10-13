@@ -1,0 +1,22 @@
+const express = require('express')
+const router = express.Router()
+const userRequestService = require('../services/userRequest.service')
+const userRequestValidator = require('../validators/user_request.validator')
+
+router.post('/api/v0/users/addFriend', userRequestValidator.validateAddFriend(), userRequestService.addFriend)
+router.post('/api/v0/users/accepFriend', userRequestValidator.validateAccepFriend(), userRequestService.acceptFriend)
+router.post('/api/v0/users/declineFriend', userRequestValidator.validateDeclineFriend(), userRequestService.declineFriend)
+
+router.get('/api/v0/users/listFriendRequest', userRequestService.getALLlistUserRequest)
+
+router.get('/api/v0/users/getListFriendRequestByPhoneUser', userRequestValidator.validatePhoneUserRequest(), userRequestService.getListFriendRequestByPhoneUser)
+
+router.get('/api/v0/users/getListFriendContactByPhoneUser', userRequestValidator.validatePhoneUserRequest(), userRequestService.getListFriendContactByPhoneUser)
+
+router.get('/api/v0/users/getListFriendPhoneBookByPhoneUser', userRequestValidator.validatePhoneUserRequest(), userRequestService.getListPhoneBookByPhoneUser)
+
+router.get('/api/v0/users/textSearch', userRequestValidator.validateTextSearch(), userRequestService.getTextSearch)
+
+router.post('/api/v0/users/deleteFriend', userRequestValidator.validateDeleteFriend(), userRequestService.deleteFriend)
+
+module.exports = router

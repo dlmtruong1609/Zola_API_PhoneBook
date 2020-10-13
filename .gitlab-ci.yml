@@ -1,0 +1,20 @@
+image: 'ubuntu:20.04'
+stages:
+  - deploy
+deploy:
+  stage: deploy
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - ssh-keyscan -H 'gitlab.com' >> ~/.ssh/known_hosts
+  only: 
+    - master
+  script: 
+    - echo "Deploying to server"
+    - ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -T root@52.221.187.39 -p 22 "cd /home/api-account-chat && git pull"
+    - exit
