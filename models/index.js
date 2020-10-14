@@ -19,6 +19,8 @@ const db = {}
 db.Sequelize = Sequelize
 db.sequelize = sequelize
 
+
+db.account = require('./account.model')(sequelize, Sequelize)
 db.userRequest = require('./userRequest.model')(sequelize, Sequelize)
 db.userContact = require('./userContact.model')(sequelize, Sequelize)
 db.userPhoneBook = require('./userPhoneBook.model')(sequelize, Sequelize)
