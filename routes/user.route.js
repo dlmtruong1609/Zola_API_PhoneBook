@@ -23,5 +23,6 @@ router.get('/api/v0/users/getListPhoneBookById', userRequestValidator.validateGe
 
 router.get('/api/v0/users/getListRequestId', userRequestValidator.validateGetFriendRequestById(), userRequestService.getListRequestByUserId)
 
+router.get('/api/v0/users/getListContactId', userRequestValidator.validateGetFriendContactById(), userRequestService.getListFriendContactById)
 
 module.exports = router

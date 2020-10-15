@@ -177,6 +177,20 @@ const validateGetFriendRequestById = () => {
   ]
 }
 
+const validateGetFriendContactById = () => {
+  return [
+    check('id', CONSTANT.FRIEND_CONTACT_BY_ID__REQUIRED).not().isEmpty(),
+    check('id').custom(async (value, { req }) => { 
+      const result = await db.sequelize.query(`select *  FROM public."UserContacts" where id='${value}'`)
+      if (result[1].rowCount === 0) {
+        return Promise.reject(CONSTANT.FRIEND_CONTACT_BY_ID_NOT_FOUND)
+      } else if (result[0][0].friend_id === null || typeof result[0][0].friend_id === 'undefined' || result[0][0].friend_id.length <= 0) {
+        return Promise.reject(CONSTANT.USER_ID_DONT_HAVE_ANY_LIST_CONTACT)
+      }
+    })
+  ]
+}
+
 
 module.exports = {
   validateAddFriend: validateAddFriend,
@@ -186,5 +200,6 @@ module.exports = {
   validateTextSearch: validateTextSearch,
   validateDeleteFriend: validateDeleteFriend,
   validateGetListPhoneBookById: validateGetListPhoneBookById,
-  validateGetFriendRequestById: validateGetFriendRequestById
+  validateGetFriendRequestById: validateGetFriendRequestById,
+  validateGetFriendContactById: validateGetFriendContactById
 }

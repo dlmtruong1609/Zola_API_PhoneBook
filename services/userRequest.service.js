@@ -386,6 +386,27 @@ const getListRequestByUserId = async (req, res) => {
   }
 }
 
+const getListFriendContactById = async (req, res) => {
+  const errs = validationResult(req).formatWith(errorFormatter) // format chung
+  const value = req.query.id
+  if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
+    const result = await db.sequelize.query(`select *  FROM public."UserContacts" where id=${value}`)
+    //result[0]
+    Account.findAll({
+      where: { id: result[0][0].friend_id}
+    }).then(listUserFound => {
+      return res.status(200).send(
+        new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
+      )
+    })
+   
+  } else {
+    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    res.status(400).send(response)
+  }
+}
+
+
 
 module.exports = {
   addFriend: addFriend,
@@ -398,5 +419,6 @@ module.exports = {
   getTextSearch: getTextSearch,
   deleteFriend: deleteFriend,
   getListPhoneBookById: getListPhoneBookById,
-  getListRequestByUserId: getListRequestByUserId 
+  getListRequestByUserId: getListRequestByUserId,
+  getListFriendContactById: getListFriendContactById
 }
