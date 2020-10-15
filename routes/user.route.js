@@ -19,6 +19,9 @@ router.get('/api/v0/users/textSearch', userRequestValidator.validateTextSearch()
 
 router.post('/api/v0/users/deleteFriend', userRequestValidator.validateDeleteFriend(), userRequestService.deleteFriend)
 
-router.get('/api/v0/users/getListPhoneBookByIdUser', userRequestValidator.validateGetListPhoneBookById(), userRequestService.getListPhoneBookById)
+router.get('/api/v0/users/getListPhoneBookById', userRequestValidator.validateGetListPhoneBookById(), userRequestService.getListPhoneBookById)
+
+router.get('/api/v0/users/getListRequestId', userRequestValidator.validateGetFriendRequestById(), userRequestService.getListRequestByUserId)
+
 
 module.exports = router

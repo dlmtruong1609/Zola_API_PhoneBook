@@ -150,19 +150,34 @@ const validateTextSearch = () => {
 
 const validateGetListPhoneBookById = () => {
   return [
-    check('id', CONSTANT.PHONE_IS_REQUIRED).not().isEmpty(),
+    check('id', CONSTANT.USER_ID_PHONE_BOOK_REQUIRED).not().isEmpty(),
     check('id').custom(async (value, { req }) => { 
       const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where id='${value}'`)
-      console.log(result[0][0].user_phone_book_id)
       if (result[1].rowCount === 0) {
         return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_NOT_FOUND)
       } else if (result[0][0].user_phone_book_id === null || typeof result[0][0].user_phone_book_id === 'undefined' || result[0][0].user_phone_book_id.length <= 0) {
         return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_DONT_HAVE_ANY_LIST_USER)
       }
     })
-    
   ]
 }
+
+
+const validateGetFriendRequestById = () => {
+  return [
+    check('id', CONSTANT.FRIEND_REQUEST_BY_ID__REQUIRED).not().isEmpty(),
+    check('id').custom(async (value, { req }) => { 
+      const result = await db.sequelize.query(`select *  FROM public."UserRequests" where id='${value}'`)
+      if (result[1].rowCount === 0) {
+        return Promise.reject(CONSTANT.FRIEND_REQUEST_BY_ID_NOT_FOUND)
+      } else if (result[0][0].user_request_id === null || typeof result[0][0].user_request_id === 'undefined' || result[0][0].user_request_id.length <= 0) {
+        return Promise.reject(CONSTANT.USER_ID_DONT_HAVE_ANY_LIST_REQUEST)
+      }
+    })
+  ]
+}
+
+
 module.exports = {
   validateAddFriend: validateAddFriend,
   validateAccepFriend: validateAccepFriend,
@@ -170,5 +185,6 @@ module.exports = {
   validatePhoneUserRequest: validatePhoneUserRequest,
   validateTextSearch: validateTextSearch,
   validateDeleteFriend: validateDeleteFriend,
-  validateGetListPhoneBookById: validateGetListPhoneBookById
+  validateGetListPhoneBookById: validateGetListPhoneBookById,
+  validateGetFriendRequestById: validateGetFriendRequestById
 }
