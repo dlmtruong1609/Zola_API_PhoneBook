@@ -191,6 +191,18 @@ const validateGetFriendContactById = () => {
   ]
 }
 
+const validateGetSearchFriendByPhone = () => {
+  return [
+    check('phone', CONSTANT.PHONE_IS_REQUIRED).not().isEmpty(),
+    check('phone').custom(async (value, { req }) => { 
+      const result = await db.sequelize.query(`SELECT * FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*')`)
+      if (result[1].rowCount === 0) {
+        return Promise.reject(CONSTANT.NOT_FOUND_USER)
+      }
+    })
+  ]
+}
+
 
 module.exports = {
   validateAddFriend: validateAddFriend,
@@ -201,5 +213,6 @@ module.exports = {
   validateDeleteFriend: validateDeleteFriend,
   validateGetListPhoneBookById: validateGetListPhoneBookById,
   validateGetFriendRequestById: validateGetFriendRequestById,
-  validateGetFriendContactById: validateGetFriendContactById
+  validateGetFriendContactById: validateGetFriendContactById,
+  validateGetSearchFriendByPhone: validateGetSearchFriendByPhone
 }
