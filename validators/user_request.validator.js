@@ -147,11 +147,28 @@ const validateTextSearch = () => {
     check('value', CONSTANT.NAME_IS_REQUIRED).not().isEmpty()
   ]
 }
+
+const validateGetListPhoneBookById = () => {
+  return [
+    check('id', CONSTANT.PHONE_IS_REQUIRED).not().isEmpty(),
+    check('id').custom(async (value, { req }) => { 
+      const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where id='${value}'`)
+      console.log(result[0][0].user_phone_book_id)
+      if (result[1].rowCount === 0) {
+        return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_NOT_FOUND)
+      } else if (result[0][0].user_phone_book_id === null || typeof result[0][0].user_phone_book_id === 'undefined' || result[0][0].user_phone_book_id.length <= 0) {
+        return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_DONT_HAVE_ANY_LIST_USER)
+      }
+    })
+    
+  ]
+}
 module.exports = {
   validateAddFriend: validateAddFriend,
   validateAccepFriend: validateAccepFriend,
   validateDeclineFriend: validateDeclineFriend,
   validatePhoneUserRequest: validatePhoneUserRequest,
   validateTextSearch: validateTextSearch,
-  validateDeleteFriend: validateDeleteFriend
+  validateDeleteFriend: validateDeleteFriend,
+  validateGetListPhoneBookById: validateGetListPhoneBookById
 }

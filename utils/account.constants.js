@@ -76,6 +76,12 @@ module.exports.NOT_FOUND_USER_ID_WANT_DECLINE = 'not found user want decline'
 module.exports.USER_ID_WANT_ACCEPT_FRIEND_IS_REQUIRED = "user id want accept friend is required"
 module.exports.USER_WANT_ACCEPT_INVALID="user want accept invalid"
 
+
+//get list phone book by id 
+module.exports.USER_ID_PHONE_BOOK_REQUIRED="User id phone book is required"
+module.exports.USER_ID_PHONE_BOOK_NOT_FOUND="User id phone book not found"
+module.exports.USER_ID_PHONE_BOOK_DONT_HAVE_ANY_LIST_USER="User id phone book don't have any list user"
+
 module.exports.USER_CONTACT_INVALID = 'user contact invalid'
 module.exports.SEND_MAIL_FAILED = 'Has problem when send email'
 module.exports.USER_NOT_FOUND = 'User Not Found'
