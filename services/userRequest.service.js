@@ -449,7 +449,6 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
         )
       })
     }
-
     if (typeCollection === 2) {
       const result = await db.sequelize.query(`SELECT * FROM public."UserContacts" WHERE user_id='${user_id}'`)
       result[0][0].friend_id.forEach((element, number, object) => {
@@ -520,6 +519,51 @@ const deletePhoneInUserPhoneBook = (req, res) => {
   deletePhoneByIdCommon(req, res, 3);
 }
 
+const postSyncPhonebook = async (req, res) => {
+  const errs = validationResult(req).formatWith(errorFormatter) // format chung
+  const value = req.body.user_id
+  const list = req.body.listPhoneBook
+  console.log("ok")
+  if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
+    //loc account co dk trong he thong 
+    const listAccount = [];
+    list.forEach(element => {
+      listAccount.push("'" + element + "'");
+    })
+    const resultFindAccount = await db.sequelize.query(`select * from public."Accounts" where phone in (${listAccount})`);
+    console.log(`select * from public."Accounts" where user_id in (${listAccount})`)
+    const listAccountId = [];
+    console.log(resultFindAccount[0][0])
+    resultFindAccount[0].forEach(element => {
+      // console.log(element)
+      listAccountId.push(element.id);
+    })
+    const result = await db.sequelize.query(`select * from public."UserPhoneBooks" where user_id='${value}'`);
+    // //da khoi tao
+
+    if (typeof result[0][0] !== 'undefined') {
+      userPhoneBook.update({
+        user_phone_book_id: listAccountId
+      }, {
+        where: { id: result[0][0].id }
+      }).then(resultUpdate => {
+        return res.status(200).send(new Response(true, CONSTANT.SYNC_SUCCESS, null))
+      })
+    } else {
+      //chua khoi tao
+      userPhoneBook.create({
+        user_id: userId,
+        user_phone_book_id: listAccountId
+      }).then(resultInitUserRequest => {
+        return res.status(200).send(new Response(true, CONSTANT.SYNC_SUCCESS, null))
+      })
+    }
+  } else {
+    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    res.status(400).send(response)
+  }
+}
+
 module.exports = {
   addFriend: addFriend,
   getALLlistUserRequest: getALLlistUserRequest,
@@ -536,5 +580,6 @@ module.exports = {
   getSearchUserByPhone: getSearchUserByPhone,
   deletePhoneInUserRequest: deletePhoneInUserRequest,
   deletePhoneInUserContact: deletePhoneInUserContact,
-  deletePhoneInUserPhoneBook: deletePhoneInUserPhoneBook
+  deletePhoneInUserPhoneBook: deletePhoneInUserPhoneBook,
+  postSyncPhonebook: postSyncPhonebook
 }

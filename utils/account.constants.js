@@ -103,6 +103,10 @@ module.exports.NOT_FOUND_USER_WANT_DELETE="not found user want delete"
 module.exports.USER_WANT_DELETE_IS_INVALID="user id want delete is invalid"
 module.exports.USER_ID_DONT_HAVE_ANY_LIST_PHONE_BOOK="Don't have any friend in phone book"
 
+//sync phonebook
+module.exports.LIST_PHONE_BOOK_IS_REQUIRED="list phone book is required"
+module.exports.LIST_PHONE_BOOK_IS_INVALID="list phone book is invalid"
+module.exports.SYNC_SUCCESS="sync user phone book success"
 
 module.exports.USER_CONTACT_INVALID = 'user contact invalid'
 module.exports.SEND_MAIL_FAILED = 'Has problem when send email'

@@ -315,6 +315,20 @@ const validateDeletePhoneByIdUserPhoneBook = () => {
   ]
 }
 
+const validatePostSyncPhoneBook = () => {
+  return [
+    check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
+    check('user_id').custom((value, { req }) => {
+      return Account.findByPk(req.body.user_id).then((account) => {
+        if (!account) {
+          return Promise.reject(CONSTANT.USER_ID_NOT_FOUND)
+        }
+      })
+    }),
+    check('listPhoneBook', CONSTANT.LIST_PHONE_BOOK_IS_REQUIRED).not().isEmpty()
+  ]
+}
+
 module.exports = {
   validateAddFriend: validateAddFriend,
   validateAccepFriend: validateAccepFriend,
@@ -328,5 +342,6 @@ module.exports = {
   validateGetSearchFriendByPhone: validateGetSearchFriendByPhone,
   validateDeletePhoneByIdUserRequest: validateDeletePhoneByIdUserRequest,
   validateDeletePhoneByIdUserContact: validateDeletePhoneByIdUserContact,
-  validateDeletePhoneByIdUserPhoneBook: validateDeletePhoneByIdUserPhoneBook
+  validateDeletePhoneByIdUserPhoneBook: validateDeletePhoneByIdUserPhoneBook,
+  validatePostSyncPhoneBook: validatePostSyncPhoneBook
 }
