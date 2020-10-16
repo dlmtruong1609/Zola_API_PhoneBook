@@ -141,6 +141,10 @@ const acceptFriend = async (req, res) => {
       })
     }
 
+    res.status(200).send(
+      new Response(true, CONSTANT.ACCEPT_SUCCESS, null)
+    )
+
     // // tao room chung vi ca 2 dieu kien tren deu thanh cong
     // room.create({
     //   name: null,
@@ -329,7 +333,6 @@ const getTextSearch = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const value = req.query.value
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    console.log(`SELECT * FROM public."Accounts" WHERE  to_tsvector(email || ' ' || name || ' ' || phone) @@ to_tsquery('${value}')`)
     const result = await db.sequelize.query(`SELECT * FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*') or name @@ to_tsquery('${value}:*') or  email @@ to_tsquery('${value}:*')`)
     if (typeof result[0][0] === 'undefined') {
       return res.status(200).send(
@@ -354,6 +357,10 @@ const getListPhoneBookById = async (req, res) => {
     const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`)
     Account.findAll({
       where: { id: result[0][0].user_phone_book_id }
+    },{
+      attributes: {
+        exclude: ['password']
+      }
     }).then(listUserFound => {
       return res.status(200).send(
         new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
@@ -374,6 +381,10 @@ const getListRequestByUserId = async (req, res) => {
     //result[0]
     Account.findAll({
       where: { id: result[0][0].user_request_id }
+    },{
+      attributes: {
+        exclude: ['password']
+      }
     }).then(listUserFound => {
       return res.status(200).send(
         new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
@@ -393,6 +404,10 @@ const getListFriendContactById = async (req, res) => {
     //result[0]
     Account.findAll({
       where: { id: result[0][0].friend_id }
+    },{
+      attributes: {
+        exclude: ['password']
+      }
     }).then(listUserFound => {
       return res.status(200).send(
         new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
