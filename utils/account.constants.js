@@ -92,6 +92,18 @@ module.exports.USER_ID_CONTACT_ID__REQUIRED="user id contact is required"
 module.exports.USER_ID_CONTACT_NOT_FOUND=" user id contact not found"
 module.exports.USER_ID_DONT_HAVE_ANY_LIST_CONTACT="Don't have any friend"
 
+//delete phone by id
+module.exports.DELETE_PHONE_BY_ID_REQUEST_SUCCESS="delete phone by id in request success"
+module.exports.DELETE_PHONE_BY_ID_CONTACT_SUCCESS="delete phone by id in contact success"
+module.exports.DELETE_PHONE_BY_ID_PHONEBOOK_SUCCESS="delete phone by id in phone book success"
+
+//delete phone by id user request 
+module.exports.USER_WANT_DELETE_IS_REQUIRED="user id is required"
+module.exports.NOT_FOUND_USER_WANT_DELETE="not found user want delete"
+module.exports.USER_WANT_DELETE_IS_INVALID="user id want delete is invalid"
+module.exports.USER_ID_DONT_HAVE_ANY_LIST_PHONE_BOOK="Don't have any friend in phone book"
+
+
 module.exports.USER_CONTACT_INVALID = 'user contact invalid'
 module.exports.SEND_MAIL_FAILED = 'Has problem when send email'
 module.exports.USER_NOT_FOUND = 'User Not Found'

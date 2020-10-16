@@ -8,7 +8,7 @@ const room = db.room
 const userAttend = db.userAttend
 var { validationResult } = require('express-validator')
 const CONSTANT = require('../utils/account.constants')
-const { userRequest } = require('../models')
+const { userRequest, userPhoneBook } = require('../models')
 require('dotenv').config()
 // Biến cục bộ trên server này sẽ lưu trữ tạm danh sách token
 // Nen lưu vào Redis hoặc DB
@@ -416,7 +416,109 @@ const getSearchUserByPhone = async (req, res) => {
   }
 }
 
+//delete phone by id
+//delete in userContact 
 
+// if type collection :
+// = 1: userRequest
+// = 2: userContact
+// = 3: userPhoneBook
+const deletePhoneByIdCommon = async (req, res, typeCollection) => {
+  const errs = validationResult(req).formatWith(errorFormatter) // format chung
+  // user phone
+  const user_id = req.body.user_id
+  // user phone want accept friend
+  const user_id_want_delete = req.body.user_id_want_delete
+  if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
+    if (typeCollection === 1) {
+      const result = await db.sequelize.query(`SELECT * FROM public."UserRequests" WHERE user_id=${user_id}`)
+      result[0][0].user_request_id.forEach((element, number, object) => {
+        if (element === parseInt(user_id_want_delete)) {
+          object.splice(number, 1)
+        }
+      })
+      UserRequest.update({
+        user_request_id: result[0][0].user_request_id
+      }, {
+        where: {
+          id: result[0][0].id
+        }
+      }).then(userHadUpdate => {
+        return res.status(200).send(
+          new Response(true, CONSTANT.DELETE_PHONE_BY_ID_REQUEST_SUCCESS, null)
+        )
+      })
+    }
+
+    if (typeCollection === 2) {
+      const result = await db.sequelize.query(`SELECT * FROM public."UserContacts" WHERE user_id='${user_id}'`)
+      result[0][0].friend_id.forEach((element, number, object) => {
+        if (element === user_id_want_delete) {
+          object.splice(number, 1)
+        }
+      })
+      UserContact.update({
+        friend_id: result[0][0].friend_id
+      }, {
+        where: {
+          id: result[0][0].id
+        }
+      })
+
+      const resultUserTwo = await db.sequelize.query(`SELECT * FROM public."UserContacts" WHERE user_id='${user_id_want_delete}'`)
+      resultUserTwo[0][0].friend_id.forEach((element, number, object) => {
+        if (element === user_id) {
+          object.splice(number, 1)
+        }
+      })
+      UserContact.update({
+        friend_id: resultUserTwo[0][0].friend_id
+      }, {
+        where: {
+          id: resultUserTwo[0][0].id
+        }
+      }).then(userHadUpdate => {
+        return res.status(200).send(
+          new Response(true, CONSTANT.DELETE_PHONE_BY_ID_CONTACT_SUCCESS, null)
+        )
+      })
+    }
+    if (typeCollection === 3) {
+      const result = await db.sequelize.query(`SELECT * FROM public."UserPhoneBooks" WHERE user_id='${user_id}'`)
+      result[0][0].user_phone_book_id.forEach((element, number, object) => {
+        if (element === user_id_want_delete) {
+          object.splice(number, 1)
+        }
+      })
+      userPhoneBook.update({
+        user_phone_book_id: result[0][0].user_phone_book_id
+      }, {
+        where: {
+          id: result[0][0].id
+        }
+      }).then(userHadUpdate => {
+        return res.status(200).send(
+          new Response(true, CONSTANT.DELETE_PHONE_BY_ID_PHONEBOOK_SUCCESS, null)
+        )
+      })
+    }
+  } else {
+    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    res.status(400).send(response)
+  }
+}
+
+const deletePhoneInUserRequest = (req, res) => {
+  deletePhoneByIdCommon(req, res, 1);
+}
+
+const deletePhoneInUserContact = (req, res) => {
+  deletePhoneByIdCommon(req, res, 2);
+}
+
+const deletePhoneInUserPhoneBook = (req, res) => {
+  deletePhoneByIdCommon(req, res, 3);
+}
 
 module.exports = {
   addFriend: addFriend,
@@ -431,5 +533,8 @@ module.exports = {
   getListPhoneBookById: getListPhoneBookById,
   getListRequestByUserId: getListRequestByUserId,
   getListFriendContactById: getListFriendContactById,
-  getSearchUserByPhone: getSearchUserByPhone
+  getSearchUserByPhone: getSearchUserByPhone,
+  deletePhoneInUserRequest: deletePhoneInUserRequest,
+  deletePhoneInUserContact: deletePhoneInUserContact,
+  deletePhoneInUserPhoneBook: deletePhoneInUserPhoneBook
 }

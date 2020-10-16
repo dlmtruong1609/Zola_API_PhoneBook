@@ -216,6 +216,105 @@ const validateGetSearchFriendByPhone = () => {
 }
 
 
+const validateDeletePhoneByIdUserRequest = () => {
+  return [
+    check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
+    check('user_id').custom((value, { req }) => {
+      return Account.findByPk(req.body.user_id).then((account) => {
+        if (!account) {
+          return Promise.reject(CONSTANT.USER_ID_NOT_FOUND)
+        }
+      })
+    }),
+    check('user_id').custom(async (value, { req }) => {
+      const result = await db.sequelize.query(`select *  FROM public."UserRequests" where user_id='${value}'`)
+      if (result[1].rowCount === 0 || result[0][0].user_request_id === null || typeof result[0][0].user_request_id === 'undefined' || result[0][0].user_request_id.length <= 0) {
+        return Promise.reject(CONSTANT.USER_ID_DONT_HAVE_ANY_LIST_REQUEST)
+      }
+    }),
+    check('user_id_want_delete', CONSTANT.USER_WANT_DELETE_IS_REQUIRED).not().isEmpty(),
+    check('user_id_want_delete').custom(async (value, { req }) => {
+      const user_id = req.body.user_id
+      if (user_id === value) {
+        return Promise.reject(CONSTANT.USER_WANT_DELETE_IS_INVALID)
+      }
+    }),
+    check('user_id_want_delete').custom(async (value, { req }) => {
+      const user_id = req.body.user_id
+      const result = await db.sequelize.query(`SELECT * FROM public."UserRequests" where ${value}=ANY(user_request_id) AND user_id=${user_id};`)
+      if (result[1].rowCount === 0) {
+        return Promise.reject(CONSTANT.NOT_FOUND_USER_WANT_DELETE)
+      }
+    })
+  ]
+}
+
+const validateDeletePhoneByIdUserContact = () => {
+  return [
+    check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
+    check('user_id').custom((value, { req }) => {
+      return Account.findByPk(req.body.user_id).then((account) => {
+        if (!account) {
+          return Promise.reject(CONSTANT.USER_ID_NOT_FOUND)
+        }
+      })
+    }),
+    check('user_id').custom(async (value, { req }) => {
+      const result = await db.sequelize.query(`select *  FROM public."UserContacts" where user_id='${value}'`)
+      if (result[1].rowCount === 0 || result[0][0].friend_id === null || typeof result[0][0].friend_id === 'undefined' || result[0][0].friend_id.length <= 0) {
+        return Promise.reject(CONSTANT.USER_ID_DONT_HAVE_ANY_LIST_CONTACT)
+      }
+    }),
+    check('user_id_want_delete', CONSTANT.USER_WANT_DELETE_IS_REQUIRED).not().isEmpty(),
+    check('user_id_want_delete').custom(async (value, { req }) => {
+      const user_id = req.body.user_id
+      if (user_id === value) {
+        return Promise.reject(CONSTANT.USER_WANT_DELETE_IS_INVALID)
+      }
+    }),
+    check('user_id_want_delete').custom(async (value, { req }) => {
+      const user_id = req.body.user_id
+      const result = await db.sequelize.query(`SELECT * FROM public."UserContacts" where '${value}'=ANY(friend_id) AND user_id='${user_id}';`)
+      if (result[1].rowCount === 0) {
+        return Promise.reject(CONSTANT.NOT_FOUND_USER_WANT_DELETE)
+      }
+    })
+  ]
+}
+
+const validateDeletePhoneByIdUserPhoneBook = () => {
+  return [
+    check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
+    check('user_id').custom((value, { req }) => {
+      return Account.findByPk(req.body.user_id).then((account) => {
+        if (!account) {
+          return Promise.reject(CONSTANT.USER_ID_NOT_FOUND)
+        }
+      })
+    }),
+    check('user_id').custom(async (value, { req }) => {
+      const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`)
+      if (result[1].rowCount === 0 || result[0][0].user_phone_book_id === null || typeof result[0][0].user_phone_book_id === 'undefined' || result[0][0].user_phone_book_id.length <= 0) {
+        return Promise.reject(CONSTANT.USER_ID_DONT_HAVE_ANY_LIST_PHONE_BOOK)
+      }
+    }),
+    check('user_id_want_delete', CONSTANT.USER_WANT_DELETE_IS_REQUIRED).not().isEmpty(),
+    check('user_id_want_delete').custom(async (value, { req }) => {
+      const user_id = req.body.user_id
+      if (user_id === value) {
+        return Promise.reject(CONSTANT.USER_WANT_DELETE_IS_INVALID)
+      }
+    }),
+    check('user_id_want_delete').custom(async (value, { req }) => {
+      const user_id = req.body.user_id
+      const result = await db.sequelize.query(`SELECT * FROM public."UserPhoneBooks" where '${value}'=ANY(user_phone_book_id) AND user_id='${user_id}';`)
+      if (result[1].rowCount === 0) {
+        return Promise.reject(CONSTANT.NOT_FOUND_USER_WANT_DELETE)
+      }
+    })
+  ]
+}
+
 module.exports = {
   validateAddFriend: validateAddFriend,
   validateAccepFriend: validateAccepFriend,
@@ -226,5 +325,8 @@ module.exports = {
   validateGetListPhoneBookById: validateGetListPhoneBookById,
   validateGetFriendRequestById: validateGetFriendRequestById,
   validateGetFriendContactById: validateGetFriendContactById,
-  validateGetSearchFriendByPhone: validateGetSearchFriendByPhone
+  validateGetSearchFriendByPhone: validateGetSearchFriendByPhone,
+  validateDeletePhoneByIdUserRequest: validateDeletePhoneByIdUserRequest,
+  validateDeletePhoneByIdUserContact: validateDeletePhoneByIdUserContact,
+  validateDeletePhoneByIdUserPhoneBook: validateDeletePhoneByIdUserPhoneBook
 }
