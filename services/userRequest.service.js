@@ -423,7 +423,7 @@ const getSearchUserByPhone = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const value = req.query.phone
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`SELECT * FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*')`)
+    const result = await db.sequelize.query(`SELECT id,phone,email,name,avatar,active,role,"createdAt","updatedAt" FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*')`)
     return res.status(200).send(new Response(true, CONSTANT.FIND_SUCCESS, result[0][0]))
   } else {
     const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
