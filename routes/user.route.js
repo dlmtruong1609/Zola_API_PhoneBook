@@ -33,7 +33,7 @@ router.post('/api/v0/users/deletePhoneByIdRequest', userRequestValidator.validat
 
 router.post('/api/v0/users/deletePhoneByIdContact', userRequestValidator.validateDeletePhoneByIdUserContact(), userRequestService.deletePhoneInUserContact)
 
-router.post('/api/v0/users/deletePhoneByIdPhoneContact', userRequestValidator.validateDeletePhoneByIdUserPhoneBook(), userRequestService.deletePhoneInUserPhoneBook)
+router.post('/api/v0/users/deletePhoneByIdPhoneBook', userRequestValidator.validateDeletePhoneByIdUserPhoneBook(), userRequestService.deletePhoneInUserPhoneBook)
 
 router.post('/api/v0/users/syncPhoneBook', userRequestValidator.validatePostSyncPhoneBook(), userRequestService.postSyncPhonebook)
 
