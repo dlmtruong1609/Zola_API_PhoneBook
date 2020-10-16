@@ -78,18 +78,18 @@ module.exports.USER_WANT_ACCEPT_INVALID="user want accept invalid"
 
 
 //get list phone book by id 
-module.exports.USER_ID_PHONE_BOOK_REQUIRED="id phone book is required"
-module.exports.USER_ID_PHONE_BOOK_NOT_FOUND="id phone book not found"
+module.exports.USER_ID_PHONE_BOOK_REQUIRED="user id phone book is required"
+module.exports.USER_ID_PHONE_BOOK_NOT_FOUND="user id phone book not found"
 module.exports.USER_ID_PHONE_BOOK_DONT_HAVE_ANY_LIST_USER="User id phone book don't have any list user"
 
 //get list friend request by id 
-module.exports.FRIEND_REQUEST_BY_ID__REQUIRED="id request is required"
-module.exports.FRIEND_REQUEST_BY_ID_NOT_FOUND="id request not found"
+module.exports.USER_ID_REQUEST_IS_REQUIRED="user id request is required"
+module.exports.USER_ID_REQUEST_ID_NOT_FOUND="user id request not found"
 module.exports.USER_ID_DONT_HAVE_ANY_LIST_REQUEST="Don't have any friend request"
 
 //get list friend contact by id 
-module.exports.FRIEND_CONTACT_BY_ID__REQUIRED="id contact is required"
-module.exports.FRIEND_CONTACT_BY_ID_NOT_FOUND="id contact not found"
+module.exports.USER_ID_CONTACT_ID__REQUIRED="user id contact is required"
+module.exports.USER_ID_CONTACT_NOT_FOUND=" user id contact not found"
 module.exports.USER_ID_DONT_HAVE_ANY_LIST_CONTACT="Don't have any friend"
 
 module.exports.USER_CONTACT_INVALID = 'user contact invalid'

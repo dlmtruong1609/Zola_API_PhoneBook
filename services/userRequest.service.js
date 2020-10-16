@@ -348,10 +348,10 @@ const getTextSearch = async (req, res) => {
 
 const getListPhoneBookById = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  const value = req.query.id
+  const value = req.query.userId
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where id=${value}`)
-    //result[0]
+    console.log(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`);
+    const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`)
     Account.findAll({
       where: { id: result[0][0].user_phone_book_id }
     }).then(listUserFound => {
@@ -359,7 +359,6 @@ const getListPhoneBookById = async (req, res) => {
         new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
       )
     })
-
   } else {
     const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
@@ -368,9 +367,10 @@ const getListPhoneBookById = async (req, res) => {
 
 const getListRequestByUserId = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  const value = req.query.id
+  const value = req.query.userId
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`select *  FROM public."UserRequests" where id=${value}`)
+    const result = await db.sequelize.query(`select *  FROM public."UserRequests" where user_id=${value}`)
+    console.log(result)
     //result[0]
     Account.findAll({
       where: { id: result[0][0].user_request_id }
@@ -379,7 +379,6 @@ const getListRequestByUserId = async (req, res) => {
         new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
       )
     })
-
   } else {
     const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
@@ -388,9 +387,9 @@ const getListRequestByUserId = async (req, res) => {
 
 const getListFriendContactById = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  const value = req.query.id
+  const value = req.query.userId
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`select *  FROM public."UserContacts" where id=${value}`)
+    const result = await db.sequelize.query(`select *  FROM public."UserContacts" where user_id='${value}'`)
     //result[0]
     Account.findAll({
       where: { id: result[0][0].friend_id }
@@ -399,7 +398,6 @@ const getListFriendContactById = async (req, res) => {
         new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
       )
     })
-
   } else {
     const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
@@ -417,7 +415,6 @@ const getSearchUserByPhone = async (req, res) => {
     res.status(400).send(response)
   }
 }
-
 
 
 
