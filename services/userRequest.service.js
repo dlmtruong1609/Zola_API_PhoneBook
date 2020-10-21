@@ -8,7 +8,8 @@ const room = db.room
 const userAttend = db.userAttend
 var { validationResult } = require('express-validator')
 const CONSTANT = require('../utils/account.constants')
-const { userRequest, userPhoneBook } = require('../models')
+const { userRequest, userPhoneBook, account } = require('../models')
+const jwtHelper = require('../helpers/jwt.helper')
 require('dotenv').config()
 // Biến cục bộ trên server này sẽ lưu trữ tạm danh sách token
 // Nen lưu vào Redis hoặc DB
@@ -350,29 +351,36 @@ const getTextSearch = async (req, res) => {
 }
 
 const getListPhoneBookById = async (req, res) => {
+  const decoded = await jwtHelper.verifyToken(
+    req.headers['x-access-token'],
+    accessTokenSecret
+  )
+  const accountDecode = decoded.data
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  const value = req.query.userId
+  const value = accountDecode.id
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    console.log(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`);
+    // console.log(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`);
     const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`)
+
     Account.findAll({
       where: { id: result[0][0].user_phone_book_id }
-    },{
+    }, {
       attributes: {
         exclude: ['password']
       }
     }).then(listUserFound => {
       return res.status(200).send(
-        new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
+        new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
       )
     })
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
 
 const getListRequestByUserId = async (req, res) => {
+
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const value = req.query.userId
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
@@ -381,7 +389,7 @@ const getListRequestByUserId = async (req, res) => {
     //result[0]
     Account.findAll({
       where: { id: result[0][0].user_request_id }
-    },{
+    }, {
       attributes: {
         exclude: ['password']
       }
@@ -404,7 +412,7 @@ const getListFriendContactById = async (req, res) => {
     //result[0]
     Account.findAll({
       where: { id: result[0][0].friend_id }
-    },{
+    }, {
       attributes: {
         exclude: ['password']
       }
@@ -567,7 +575,6 @@ const postSyncPhonebook = async (req, res) => {
     } else {
       //chua khoi tao
       userPhoneBook.create({
-        user_id: userId,
         user_phone_book_id: listAccountId
       }).then(resultInitUserRequest => {
         return res.status(200).send(new Response(true, CONSTANT.SYNC_SUCCESS, null))

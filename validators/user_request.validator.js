@@ -1,8 +1,10 @@
 /* eslint-disable camelcase */
-const { check } = require('express-validator')
 const db = require('../models')
 const Account = db.account
 const CONSTANT = require('../utils/account.constants')
+const jwtHelper = require('../helpers/jwt.helper')
+const { check, header } = require('express-validator')
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 const validateAddFriend = () => {
   return [
     check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
@@ -150,19 +152,23 @@ const validateTextSearch = () => {
 
 const validateGetListPhoneBookById = () => {
   return [
-    check('userId', CONSTANT.USER_ID_PHONE_BOOK_REQUIRED).not().isEmpty(),
-    check('userId').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`select *  FROM public."Accounts" where id='${value}'`)
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      console.log(decoded)
+      const result = await db.sequelize.query(`select *  FROM public."Accounts" where id='${decoded.id}'`)
       if (result[1].rowCount === 0) {
         return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_NOT_FOUND)
       }
     }),
-    check('userId').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`)
-      if (result[1].rowCount === 0 || result[0][0].user_phone_book_id === null || typeof result[0][0].user_phone_book_id === 'undefined' || result[0][0].user_phone_book_id.length <= 0) {
-        return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_DONT_HAVE_ANY_LIST_USER)
-      }
-    })
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where user_id='${decoded.id}'`)
+        if (result[1].rowCount === 0 || result[0][0].user_phone_book_id === null || typeof result[0][0].user_phone_book_id === 'undefined' || result[0][0].user_phone_book_id.length <= 0) {
+          return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_DONT_HAVE_ANY_LIST_USER)
+        }
+    }),
   ]
 }
 
