@@ -41,7 +41,7 @@ const addFriend = (req, res) => {
           user_id: user_request_id,
           user_request_id: listUserRequest
         }).then(resultInitUserRequest => {
-          return res.status(200).send(new Response(true, CONSTANT.WAITING_USER_ACCEPT, null))
+          return res.status(200).send(new Response(false, CONSTANT.WAITING_USER_ACCEPT, null))
         })
       } else {
         // da khoi tao
@@ -51,12 +51,12 @@ const addFriend = (req, res) => {
         }, {
           where: { id: userRequestFind.id }
         }).then(resultUpdateUserRequest => {
-          return res.status(200).send(new Response(true, CONSTANT.WAITING_USER_ACCEPT, null))
+          return res.status(200).send(new Response(false, CONSTANT.WAITING_USER_ACCEPT, null))
         })
       }
     })
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
@@ -66,12 +66,12 @@ const getALLlistUserRequest = (req, res) => {
   })
     .then((allUser) => {
       return res.status(200).send(
-        new Response(true, CONSTANT.USER_LIST, allUser)
+        new Response(false, CONSTANT.USER_LIST, allUser)
       )
     })
     .catch((_err) => {
       console.log(_err)
-      return res.status(500).send(new Response(false, CONSTANT.SERVER_ERROR, null))
+      return res.status(500).send(new Response(true, CONSTANT.SERVER_ERROR, null))
     })
 }
 
@@ -143,7 +143,7 @@ const acceptFriend = async (req, res) => {
     }
 
     res.status(200).send(
-      new Response(true, CONSTANT.ACCEPT_SUCCESS, null)
+      new Response(false, CONSTANT.ACCEPT_SUCCESS, null)
     )
 
     // // tao room chung vi ca 2 dieu kien tren deu thanh cong
@@ -167,7 +167,7 @@ const acceptFriend = async (req, res) => {
     //     })
     // });
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
@@ -193,12 +193,12 @@ const declineFriend = (req, res) => {
         }
       }).then(userHadUpdate => {
         return res.status(200).send(
-          new Response(true, CONSTANT.USER_DECLINE_UPDATE_SUCCESS, null)
+          new Response(false, CONSTANT.USER_DECLINE_UPDATE_SUCCESS, null)
         )
       })
     })
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
@@ -244,19 +244,18 @@ const deleteFriend = (req, res) => {
         }
       }).then(userHadUpdate => {
         return res.status(200).send(
-          new Response(true, CONSTANT.USER_DELETE_UPDATE_SUCCESS, null)
+          new Response(false, CONSTANT.USER_DELETE_UPDATE_SUCCESS, null)
         )
       })
     })
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
 
 const getListFriendRequestByPhoneUser = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  // user phone
   const user_phone = req.query.phone
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const result = await db.sequelize.query(`select * from public."Accounts" a join public."UserRequests" b on a.id = b.user_id where a.phone='${user_phone}'`)
@@ -270,18 +269,17 @@ const getListFriendRequestByPhoneUser = async (req, res) => {
       where: { id: result[0][0].user_request_id }
     }).then(listUserFound => {
       return res.status(200).send(
-        new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
+        new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
       )
     })
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
 
 const getListFriendContactByPhoneUser = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  console.log('ok')
   // user phone
   const user_phone = req.query.phone
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
@@ -295,18 +293,17 @@ const getListFriendContactByPhoneUser = async (req, res) => {
       where: { id: result[0][0].friend_id }
     }).then(listUserFound => {
       return res.status(200).send(
-        new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
+        new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
       )
     })
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
 
 const getListPhoneBookByPhoneUser = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  console.log('ok')
   // user phone
   const user_phone = req.query.phone
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
@@ -321,15 +318,16 @@ const getListPhoneBookByPhoneUser = async (req, res) => {
       where: { id: result[0][0].user_phone_book_id }
     }).then(listUserFound => {
       return res.status(200).send(
-        new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
+        new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
       )
     })
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
 
+//fix
 const getTextSearch = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const value = req.query.value
@@ -337,11 +335,11 @@ const getTextSearch = async (req, res) => {
     const result = await db.sequelize.query(`SELECT * FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*') or name @@ to_tsquery('${value}:*') or  email @@ to_tsquery('${value}:*')`)
     if (typeof result[0][0] === 'undefined') {
       return res.status(200).send(
-        new Response(false, CONSTANT.USER_NOT_FOUND, null)
+        new Response(false, CONSTANT.USER_NOT_FOUND, [])
       )
     } else {
       return res.status(200).send(
-        new Response(true, CONSTANT.FIND_SUCCESS, result[0])
+        new Response(false, CONSTANT.FIND_SUCCESS, result[0])
       )
     }
   } else {
@@ -350,6 +348,7 @@ const getTextSearch = async (req, res) => {
   }
 }
 
+//fix
 const getListPhoneBookById = async (req, res) => {
   const decoded = await jwtHelper.verifyToken(
     req.headers['x-access-token'],
@@ -359,9 +358,7 @@ const getListPhoneBookById = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const value = accountDecode.id
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    // console.log(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`);
     const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`)
-
     Account.findAll({
       where: { id: result[0][0].user_phone_book_id }
     }, {
@@ -379,14 +376,17 @@ const getListPhoneBookById = async (req, res) => {
   }
 }
 
+//fix
 const getListRequestByUserId = async (req, res) => {
-
+  const decoded = await jwtHelper.verifyToken(
+    req.headers['x-access-token'],
+    accessTokenSecret
+  )
+  const accountDecode = decoded.data
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  const value = req.query.userId
+  const value = accountDecode.id
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const result = await db.sequelize.query(`select *  FROM public."UserRequests" where user_id=${value}`)
-    console.log(result)
-    //result[0]
     Account.findAll({
       where: { id: result[0][0].user_request_id }
     }, {
@@ -395,18 +395,25 @@ const getListRequestByUserId = async (req, res) => {
       }
     }).then(listUserFound => {
       return res.status(200).send(
-        new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
+        new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
       )
     })
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
 
+//fix
 const getListFriendContactById = async (req, res) => {
+
+  const decoded = await jwtHelper.verifyToken(
+    req.headers['x-access-token'],
+    accessTokenSecret
+  )
+  const accountDecode = decoded.data
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  const value = req.query.userId
+  const value = accountDecode.id
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const result = await db.sequelize.query(`select *  FROM public."UserContacts" where user_id='${value}'`)
     //result[0]
@@ -418,23 +425,28 @@ const getListFriendContactById = async (req, res) => {
       }
     }).then(listUserFound => {
       return res.status(200).send(
-        new Response(true, CONSTANT.FIND_SUCCESS, listUserFound)
+        new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
       )
     })
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
 
+//fix
 const getSearchUserByPhone = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const value = req.query.phone
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const result = await db.sequelize.query(`SELECT id,phone,email,name,avatar,active,role,"createdAt","updatedAt" FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*')`)
-    return res.status(200).send(new Response(true, CONSTANT.FIND_SUCCESS, result[0][0]))
+    if (typeof result[0][0] === 'undefined') {
+      return res.status(200).send(new Response(false, CONSTANT.FIND_SUCCESS, []))
+    }else {
+      return res.status(200).send(new Response(false, CONSTANT.FIND_SUCCESS, result[0][0]))
+    }
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
@@ -468,12 +480,12 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
         }
       }).then(userHadUpdate => {
         return res.status(200).send(
-          new Response(true, CONSTANT.DELETE_PHONE_BY_ID_REQUEST_SUCCESS, null)
+          new Response(false, CONSTANT.DELETE_PHONE_BY_ID_REQUEST_SUCCESS, null)
         )
       })
     }
     if (typeCollection === 2) {
-      const result = await db.sequelize.query(`SELECT * FROM public."UserContacts" WHERE user_id='${user_id}'`)
+      const result = awai//fixt db.sequelize.query(`SELECT * FROM public."UserContacts" WHERE user_id='${user_id}'`)
       result[0][0].friend_id.forEach((element, number, object) => {
         if (element === user_id_want_delete) {
           object.splice(number, 1)
@@ -501,7 +513,7 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
         }
       }).then(userHadUpdate => {
         return res.status(200).send(
-          new Response(true, CONSTANT.DELETE_PHONE_BY_ID_CONTACT_SUCCESS, null)
+          new Response(false, CONSTANT.DELETE_PHONE_BY_ID_CONTACT_SUCCESS, null)
         )
       })
     }
@@ -520,25 +532,28 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
         }
       }).then(userHadUpdate => {
         return res.status(200).send(
-          new Response(true, CONSTANT.DELETE_PHONE_BY_ID_PHONEBOOK_SUCCESS, null)
+          new Response(false, CONSTANT.DELETE_PHONE_BY_ID_PHONEBOOK_SUCCESS, null)
         )
       })
     }
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
 
 const deletePhoneInUserRequest = (req, res) => {
+
   deletePhoneByIdCommon(req, res, 1);
 }
 
 const deletePhoneInUserContact = (req, res) => {
+
   deletePhoneByIdCommon(req, res, 2);
 }
 
 const deletePhoneInUserPhoneBook = (req, res) => {
+
   deletePhoneByIdCommon(req, res, 3);
 }
 
@@ -546,7 +561,6 @@ const postSyncPhonebook = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const value = req.body.user_id
   const list = req.body.listPhoneBook
-  console.log("ok")
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     //loc account co dk trong he thong 
     const listAccount = [];
@@ -570,18 +584,18 @@ const postSyncPhonebook = async (req, res) => {
       }, {
         where: { id: result[0][0].id }
       }).then(resultUpdate => {
-        return res.status(200).send(new Response(true, CONSTANT.SYNC_SUCCESS, null))
+        return res.status(200).send(new Response(false, CONSTANT.SYNC_SUCCESS, null))
       })
     } else {
       //chua khoi tao
       userPhoneBook.create({
         user_phone_book_id: listAccountId
       }).then(resultInitUserRequest => {
-        return res.status(200).send(new Response(true, CONSTANT.SYNC_SUCCESS, null))
+        return res.status(200).send(new Response(false, CONSTANT.SYNC_SUCCESS, null))
       })
     }
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
+    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
     res.status(400).send(response)
   }
 }
