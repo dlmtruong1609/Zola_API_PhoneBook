@@ -76,7 +76,7 @@ module.exports.NOT_FOUND_USER_ID_WANT_DECLINE = 'not found user want decline'
 module.exports.USER_ID_WANT_ACCEPT_FRIEND_IS_REQUIRED = "user id want accept friend is required"
 module.exports.USER_WANT_ACCEPT_INVALID="user want accept invalid"
 module.exports.ACCEPT_SUCCESS="accept success"
-
+module.exports.USER_ID_NOT_EQUAL_TOKEN="user id not equal token"
 //get list phone book by id 
 module.exports.USER_ID_PHONE_BOOK_REQUIRED="user id phone book is required"
 module.exports.USER_ID_PHONE_BOOK_NOT_FOUND="user id phone book not found"
