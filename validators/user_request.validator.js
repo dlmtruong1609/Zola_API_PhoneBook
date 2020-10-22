@@ -185,8 +185,10 @@ const validateGetFriendRequestById = () => {
       }
     }),
     header('x-access-token').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`select *  FROM public."UserRequests" where user_id='${decoded.id}'`)
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
       const decoded = decodedApi.data;
+      const result = await db.sequelize.query(`select *  FROM public."UserRequests" where user_id='${decoded.id}'`)
+   
       if (result[1].rowCount === 0 || result[0][0].user_request_id === null || typeof result[0][0].user_request_id === 'undefined' || result[0][0].user_request_id.length <= 0) {
         return Promise.reject(CONSTANT.USER_ID_DONT_HAVE_ANY_LIST_REQUEST)
       }
