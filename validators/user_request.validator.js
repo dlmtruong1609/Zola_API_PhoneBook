@@ -1,8 +1,10 @@
 /* eslint-disable camelcase */
-const { check } = require('express-validator')
 const db = require('../models')
 const Account = db.account
 const CONSTANT = require('../utils/account.constants')
+const jwtHelper = require('../helpers/jwt.helper')
+const { check, header } = require('express-validator')
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 const validateAddFriend = () => {
   return [
     check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
@@ -144,40 +146,47 @@ const validateDeleteFriend = () => {
 
 const validateTextSearch = () => {
   return [
-    check('value', CONSTANT.NAME_IS_REQUIRED).not().isEmpty()
+    // check('value', CONSTANT.NAME_IS_REQUIRED).not().isEmpty()
   ]
 }
 
+//fix token
 const validateGetListPhoneBookById = () => {
   return [
-    check('userId', CONSTANT.USER_ID_PHONE_BOOK_REQUIRED).not().isEmpty(),
-    check('userId').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`select *  FROM public."Accounts" where id='${value}'`)
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      console.log(decoded)
+      const result = await db.sequelize.query(`select *  FROM public."Accounts" where id='${decoded.id}'`)
       if (result[1].rowCount === 0) {
         return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_NOT_FOUND)
       }
     }),
-    check('userId').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where user_id='${value}'`)
-      if (result[1].rowCount === 0 || result[0][0].user_phone_book_id === null || typeof result[0][0].user_phone_book_id === 'undefined' || result[0][0].user_phone_book_id.length <= 0) {
-        return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_DONT_HAVE_ANY_LIST_USER)
-      }
-    })
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const result = await db.sequelize.query(`select *  FROM public."UserPhoneBooks" where user_id='${decoded.id}'`)
+        if (result[1].rowCount === 0 || result[0][0].user_phone_book_id === null || typeof result[0][0].user_phone_book_id === 'undefined' || result[0][0].user_phone_book_id.length <= 0) {
+          return Promise.reject(CONSTANT.USER_ID_PHONE_BOOK_DONT_HAVE_ANY_LIST_USER)
+        }
+    }),
   ]
 }
 
 
 const validateGetFriendRequestById = () => {
   return [
-    check('userId', CONSTANT.USER_ID_REQUEST_IS_REQUIRED).not().isEmpty(),
-    check('userId').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`select *  FROM public."Accounts" where id='${value}'`)
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const result = await db.sequelize.query(`select *  FROM public."Accounts" where id='${decoded.id}'`)
       if (result[1].rowCount === 0) {
         return Promise.reject(CONSTANT.USER_ID_REQUEST_ID_NOT_FOUND)
       }
     }),
-    check('userId').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`select *  FROM public."UserRequests" where user_id='${value}'`)
+    header('x-access-token').custom(async (value, { req }) => {
+      const result = await db.sequelize.query(`select *  FROM public."UserRequests" where user_id='${decoded.id}'`)
+      const decoded = decodedApi.data;
       if (result[1].rowCount === 0 || result[0][0].user_request_id === null || typeof result[0][0].user_request_id === 'undefined' || result[0][0].user_request_id.length <= 0) {
         return Promise.reject(CONSTANT.USER_ID_DONT_HAVE_ANY_LIST_REQUEST)
       }
@@ -187,15 +196,18 @@ const validateGetFriendRequestById = () => {
 
 const validateGetFriendContactById = () => {
   return [
-    check('userId', CONSTANT.USER_ID_CONTACT_ID__REQUIRED).not().isEmpty(),
-    check('userId').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`select *  FROM public."Accounts" where id='${value}'`)
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const result = await db.sequelize.query(`select *  FROM public."Accounts" where id='${decoded.id}'`)
       if (result[1].rowCount === 0) {
         return Promise.reject(CONSTANT.USER_ID_CONTACT_NOT_FOUND)
       }
     }),
-    check('userId').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`select *  FROM public."UserContacts" where user_id='${value}'`)
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const result = await db.sequelize.query(`select *  FROM public."UserContacts" where user_id='${decoded.id}'`)
       if (result[1].rowCount === 0 || result[0][0].friend_id === null || typeof result[0][0].friend_id === 'undefined' || result[0][0].friend_id.length <= 0) {
         return Promise.reject(CONSTANT.USER_ID_DONT_HAVE_ANY_LIST_CONTACT)
       }
@@ -205,13 +217,12 @@ const validateGetFriendContactById = () => {
 
 const validateGetSearchFriendByPhone = () => {
   return [
-    check('phone', CONSTANT.PHONE_IS_REQUIRED).not().isEmpty(),
-    check('phone').custom(async (value, { req }) => {
-      const result = await db.sequelize.query(`SELECT * FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*')`)
-      if (result[1].rowCount === 0) {
-        return Promise.reject(CONSTANT.NOT_FOUND_USER)
-      }
-    })
+    // check('phone').custom(async (value, { req }) => {
+    //   const result = await db.sequelize.query(`SELECT * FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*')`)
+    //   if (result[1].rowCount === 0) {
+    //     return Promise.reject(CONSTANT.NOT_FOUND_USER)
+    //   }
+    // })
   ]
 }
 
