@@ -28,7 +28,6 @@ const addFriend = (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const user_id = req.body.user_id // Đây là id của chính user đó
   const user_request_id = req.body.user_request_id // Đây là id của user mà user đó muốn kết bạn
-  console.log(errs.array().length)
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     UserRequest.findOne({
       where: { user_id: user_request_id }
@@ -589,6 +588,7 @@ const postSyncPhonebook = async (req, res) => {
     } else {
       //chua khoi tao
       userPhoneBook.create({
+        user_id:value,
         user_phone_book_id: listAccountId
       }).then(resultInitUserRequest => {
         return res.status(200).send(new Response(false, CONSTANT.SYNC_SUCCESS, null))

@@ -7,6 +7,14 @@ const { check, header } = require('express-validator')
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 const validateAddFriend = () => {
   return [
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const userId = req.body.user_id;
+      if(userId != decoded.id){
+        return Promise.reject(CONSTANT.USER_ID_NOT_EQUAL_TOKEN)
+      }
+    }),
     check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
     check('user_id').custom((value, { req }) => {
       return Account.findByPk(req.body.user_id).then((account) => {
@@ -56,6 +64,14 @@ const validateAddFriend = () => {
 
 const validateAccepFriend = () => {
   return [
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const userId = req.body.user_id;
+      if(userId != decoded.id){
+        return Promise.reject(CONSTANT.USER_ID_NOT_EQUAL_TOKEN)
+      }
+    }),
     check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
     check('user_id').custom((value, { req }) => {
       return Account.findByPk(req.body.user_id).then((account) => {
@@ -83,6 +99,14 @@ const validateAccepFriend = () => {
 
 const validateDeclineFriend = () => {
   return [
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const userId = req.body.user_id;
+      if(userId != decoded.id){
+        return Promise.reject(CONSTANT.USER_ID_NOT_EQUAL_TOKEN)
+      }
+    }),
     check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
     check('user_id').custom((value, { req }) => {
       return Account.findByPk(req.body.user_id).then((account) => {
@@ -126,6 +150,14 @@ const validatePhoneUserRequest = () => {
 
 const validateDeleteFriend = () => {
   return [
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const userId = req.body.user_id;
+      if(userId != decoded.id){
+        return Promise.reject(CONSTANT.USER_ID_NOT_EQUAL_TOKEN)
+      }
+    }),
     check('user_id').custom((value, { req }) => {
       return Account.findByPk(req.body.user_id).then((account) => {
         if (!account) {
@@ -231,6 +263,14 @@ const validateGetSearchFriendByPhone = () => {
 
 const validateDeletePhoneByIdUserRequest = () => {
   return [
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const userId = req.body.user_id;
+      if(userId != decoded.id){
+        return Promise.reject(CONSTANT.USER_ID_NOT_EQUAL_TOKEN)
+      }
+    }),
     check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
     check('user_id').custom((value, { req }) => {
       return Account.findByPk(req.body.user_id).then((account) => {
@@ -264,6 +304,14 @@ const validateDeletePhoneByIdUserRequest = () => {
 
 const validateDeletePhoneByIdUserContact = () => {
   return [
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const userId = req.body.user_id;
+      if(userId != decoded.id){
+        return Promise.reject(CONSTANT.USER_ID_NOT_EQUAL_TOKEN)
+      }
+    }),
     check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
     check('user_id').custom((value, { req }) => {
       return Account.findByPk(req.body.user_id).then((account) => {
@@ -297,6 +345,14 @@ const validateDeletePhoneByIdUserContact = () => {
 
 const validateDeletePhoneByIdUserPhoneBook = () => {
   return [
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const userId = req.body.user_id;
+      if(userId != decoded.id){
+        return Promise.reject(CONSTANT.USER_ID_NOT_EQUAL_TOKEN)
+      }
+    }),
     check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
     check('user_id').custom((value, { req }) => {
       return Account.findByPk(req.body.user_id).then((account) => {
@@ -330,6 +386,16 @@ const validateDeletePhoneByIdUserPhoneBook = () => {
 
 const validatePostSyncPhoneBook = () => {
   return [
+    header('x-access-token').custom(async (value, { req }) => {
+      const decodedApi = await jwtHelper.verifyToken(req.headers['x-access-token'], accessTokenSecret)
+      const decoded = decodedApi.data;
+      const userId = req.body.user_id;
+      console.log(decoded.id)
+      console.log(userId)
+      if(userId != decoded.id){
+        return Promise.reject(CONSTANT.USER_ID_NOT_EQUAL_TOKEN)
+      }
+    }),
     check('user_id', CONSTANT.USER_ID_IS_REQUIRED).not().isEmpty(),
     check('user_id').custom((value, { req }) => {
       return Account.findByPk(req.body.user_id).then((account) => {
