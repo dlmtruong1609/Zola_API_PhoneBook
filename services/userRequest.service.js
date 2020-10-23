@@ -24,6 +24,8 @@ const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
   }
 }
 
+const fieldAllowInJson = 'id,phone,email,name,avatar,active,role,"createdAt","updatedAt"';
+
 const addFriend = (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const user_id = req.body.user_id // Đây là id của chính user đó
@@ -257,7 +259,7 @@ const getListFriendRequestByPhoneUser = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const user_phone = req.query.phone
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`select * from public."Accounts" a join public."UserRequests" b on a.id = b.user_id where a.phone='${user_phone}'`)
+    const result = await db.sequelize.query(`select ${fieldAllowInJson} from public."Accounts" a join public."UserRequests" b on a.id = b.user_id where a.phone='${user_phone}'`)
     if (typeof result[0][0] === 'undefined') {
       return res.status(200).send(
         new Response(false, CONSTANT.DONT_HAVE_ANY_FRIEND_REQUEST, null)
@@ -282,7 +284,7 @@ const getListFriendContactByPhoneUser = async (req, res) => {
   // user phone
   const user_phone = req.query.phone
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`select * from public."Accounts" a join public."UserContacts" b on a.id = cast(b.user_id as int) where a.phone='${user_phone}'`)
+    const result = await db.sequelize.query(`select ${fieldAllowInJson} from public."Accounts" a join public."UserContacts" b on a.id = cast(b.user_id as int) where a.phone='${user_phone}'`)
     if (typeof result[0][0] === 'undefined') {
       return res.status(200).send(
         new Response(false, CONSTANT.DONT_HAVE_ANY_FRIEND_CONTACT, null)
@@ -306,7 +308,7 @@ const getListPhoneBookByPhoneUser = async (req, res) => {
   // user phone
   const user_phone = req.query.phone
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`select * from public."Accounts" a join public."UserPhoneBooks" b on a.id = cast(b.user_id as int) where a.phone='${user_phone}'`)
+    const result = await db.sequelize.query(`select ${fieldAllowInJson} from public."Accounts" a join public."UserPhoneBooks" b on a.id = cast(b.user_id as int) where a.phone='${user_phone}'`)
     if (typeof result[0][0] === 'undefined') {
       return res.status(200).send(
         new Response(false, CONSTANT.DONT_HAVE_ANY_FRIEND_BOOK, null)
@@ -331,9 +333,9 @@ const getTextSearch = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   
   const value = req.query.value
-  console.log(value)
+  console.log(`SELECT ${fieldAllowInJson} FROM public."Accounts" WHERE phone like '${value}%' or name like '${value}%' or  email like '${value}%'`)
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`SELECT * FROM public."Accounts" WHERE phone like '${value}%' or name like '${value}%' or  email like '${value}%'`)
+    const result = await db.sequelize.query(`SELECT ${fieldAllowInJson} FROM public."Accounts" WHERE phone like '${value}%' or name like '${value}%' or  email like '${value}%'`)
     if (typeof result[0][0] === 'undefined') {
       return res.status(200).send(
         new Response(false, CONSTANT.USER_NOT_FOUND, [])
@@ -440,7 +442,7 @@ const getSearchUserByPhone = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   const value = req.query.phone
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`SELECT id,phone,email,name,avatar,active,role,"createdAt","updatedAt" FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*')`)
+    const result = await db.sequelize.query(`SELECT ${fieldAllowInJson} FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*')`)
     if (typeof result[0][0] === 'undefined') {
       return res.status(200).send(new Response(false, CONSTANT.FIND_SUCCESS, []))
     }else {
@@ -568,7 +570,7 @@ const postSyncPhonebook = async (req, res) => {
     list.forEach(element => {
       listAccount.push("'" + element + "'");
     })
-    const resultFindAccount = await db.sequelize.query(`select * from public."Accounts" where phone in (${listAccount})`);
+    const resultFindAccount = await db.sequelize.query(`select ${fieldAllowInJson} from public."Accounts" where phone in (${listAccount})`);
     console.log(`select * from public."Accounts" where user_id in (${listAccount})`)
     const listAccountId = [];
     console.log(resultFindAccount[0][0])
