@@ -329,9 +329,11 @@ const getListPhoneBookByPhoneUser = async (req, res) => {
 //fix
 const getTextSearch = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
+  
   const value = req.query.value
+  console.log(value)
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
-    const result = await db.sequelize.query(`SELECT * FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*') or name @@ to_tsquery('${value}:*') or  email @@ to_tsquery('${value}:*')`)
+    const result = await db.sequelize.query(`SELECT * FROM public."Accounts" WHERE phone like '${value}%' or name like '${value}%' or  email like '${value}%'`)
     if (typeof result[0][0] === 'undefined') {
       return res.status(200).send(
         new Response(false, CONSTANT.USER_NOT_FOUND, [])
