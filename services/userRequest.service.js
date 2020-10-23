@@ -600,6 +600,17 @@ const postSyncPhonebook = async (req, res) => {
   }
 }
 
+const getUserSentRequest = async (req, res) => {
+  const decoded = await jwtHelper.verifyToken(
+    req.headers["x-access-token"],
+    accessTokenSecret
+  );
+  const accountDecode = decoded.data;
+  const userId = accountDecode.id;
+  const result = await db.sequelize.query(`SELECT a.id, a.phone, a.email, a.name, a.avatar, a.role FROM "Accounts" a left join "UserRequests" b on a.id=b.user_id where ${userId}=ANY(user_request_id);`)
+  res.status(200).send(new Response(false, CONSTANT.FIND_SUCCESS, result[0]))
+}
+
 module.exports = {
   addFriend: addFriend,
   getALLlistUserRequest: getALLlistUserRequest,
@@ -617,5 +628,6 @@ module.exports = {
   deletePhoneInUserRequest: deletePhoneInUserRequest,
   deletePhoneInUserContact: deletePhoneInUserContact,
   deletePhoneInUserPhoneBook: deletePhoneInUserPhoneBook,
-  postSyncPhonebook: postSyncPhonebook
+  postSyncPhonebook: postSyncPhonebook,
+  getUserSentRequest: getUserSentRequest
 }

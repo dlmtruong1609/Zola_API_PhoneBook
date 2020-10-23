@@ -37,4 +37,6 @@ router.post('/api/v0/users/deletePhoneByIdPhoneBook', userRequestValidator.valid
 
 router.post('/api/v0/users/syncPhoneBook', userRequestValidator.validatePostSyncPhoneBook(), userRequestService.postSyncPhonebook)
 
+router.get('/api/v0/users/request/sent', userRequestService.getUserSentRequest)
+
 module.exports = router
