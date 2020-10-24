@@ -488,7 +488,7 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
       })
     }
     if (typeCollection === 2) {
-      const result = awai//fixt db.sequelize.query(`SELECT * FROM public."UserContacts" WHERE user_id='${user_id}'`)
+      const result = await db.sequelize.query(`SELECT * FROM public."UserContacts" WHERE user_id='${user_id}'`)
       result[0][0].friend_id.forEach((element, number, object) => {
         if (element === user_id_want_delete) {
           object.splice(number, 1)
