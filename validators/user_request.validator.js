@@ -404,7 +404,7 @@ const validatePostSyncPhoneBook = () => {
         }
       })
     }),
-    check('listPhoneBook', CONSTANT.LIST_PHONE_BOOK_IS_REQUIRED).not().isEmpty()
+    // check('listPhoneBook', CONSTANT.LIST_PHONE_BOOK_IS_REQUIRED).not().isEmpty()
   ]
 }
 
