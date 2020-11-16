@@ -7,7 +7,7 @@ const UserContact = db.userContact
 const room = db.room
 const userAttend = db.userAttend
 var { validationResult } = require('express-validator')
-const CONSTANT = require('../utils/account.constants')
+const CONSTANT = require('../constants/account.constants')
 const { userRequest, userPhoneBook, account } = require('../models')
 const jwtHelper = require('../helpers/jwt.helper')
 require('dotenv').config()

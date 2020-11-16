@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 const db = require('../models')
 const Account = db.account
-const CONSTANT = require('../utils/account.constants')
+const CONSTANT = require('../constants/account.constants')
 const jwtHelper = require('../helpers/jwt.helper')
 const { check, header } = require('express-validator')
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
