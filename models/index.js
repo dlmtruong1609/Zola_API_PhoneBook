@@ -20,12 +20,8 @@ const db = {}
 db.Sequelize = Sequelize
 db.sequelize = sequelize
 
-
 db.account = require('./account.model')(sequelize, Sequelize)
 db.userRequest = require('./userRequest.model')(sequelize, Sequelize)
 db.userContact = require('./userContact.model')(sequelize, Sequelize)
 db.userPhoneBook = require('./userPhoneBook.model')(sequelize, Sequelize)
-db.userAttend = require('./userAttend.model')(sequelize, Sequelize)
-db.room = require('./room.model')(sequelize, Sequelize)
-db.message = require('./message.model')(sequelize, Sequelize)
 module.exports = db

@@ -24,8 +24,7 @@
     "pg-hstore": "^2.3.3",
     "pg-search-sequelize": "0.0.10",
     "request": "^2.88.2",
-    "sequelize": "^6.3.5",
-    "twilio": "^3.49.4"
+    "sequelize": "^6.3.5"
   },
   "devDependencies": {
     "eslint": "^7.15.0",
