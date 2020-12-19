@@ -7,6 +7,10 @@ APP: Download [here]()
 # # Frontend Project
 - Web application: `https://gitlab.com/chatonline/zola-client`
 - Mobile application: `https://gitlab.com/chatonline/mobile-fe`
+If registration doesn't work because of running out of money, create an account with admin
+- Admin Page `https://admin.zolavn.cf` 
+  Phone: 0323456789
+  Password: 123123
 # # Server
 ## Quick start
 ### Prerequisites
@@ -24,3 +28,5 @@ See: [API-Gateway](https://gitlab.com/dlmtruong1609/api-gateway-realestate)
 4. Change info in .env with env.example
 3. `npm run dev` with dev or `npm start` with pm2 
 
+# Contact
+Email: dlmtruong1609@gmail.com

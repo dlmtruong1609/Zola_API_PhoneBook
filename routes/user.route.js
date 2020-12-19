@@ -35,7 +35,7 @@ router.post('/api/v0/users/deletePhoneByIdContact', userRequestValidator.validat
 
 router.post('/api/v0/users/deletePhoneByIdPhoneBook', userRequestValidator.validateDeletePhoneByIdUserPhoneBook(), userRequestController.deletePhoneInUserPhoneBook)
 
-router.post('/api/v0/users/syncPhoneBook', userRequestValidator.validatePostSyncPhoneBook(), userRequestController.postSyncPhonebook)
+router.post('/api/v0/users/syncPhoneBook', userRequestController.postSyncPhonebook)
 
 router.get('/api/v0/users/request/sent', userRequestController.getUserSentRequest)
 

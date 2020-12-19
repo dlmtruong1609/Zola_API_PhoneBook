@@ -26,7 +26,12 @@ const fieldAllowInJson = 'id,phone,email,name,avatar,active,role,"createdAt","up
 
 const addFriend = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  const user_id = req.body.user_id // Đây là id của chính user đó
+  const decoded = await jwtHelper.verifyToken(
+    req.headers['x-access-token'],
+    accessTokenSecret
+  )
+  const accountDecode = decoded.data
+  const user_id = accountDecode.id
   const user_request_id = req.body.user_request_id // Đây là id của user mà user đó muốn kết bạn
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const userRequestFind = await UserRequest.findOne({
@@ -73,7 +78,12 @@ const getALLlistUserRequest = async (req, res) => {
 const acceptFriend = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   // user phone
-  const user_id = req.body.user_id
+  const decoded = await jwtHelper.verifyToken(
+    req.headers['x-access-token'],
+    accessTokenSecret
+  )
+  const accountDecode = decoded.data
+  const user_id = accountDecode.id
 
   // user phone want accept friend
   const user_id_want_accept = req.body.user_id_want_accept
@@ -169,7 +179,12 @@ const acceptFriend = async (req, res) => {
 const declineFriend = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   // user phone
-  const user_id = req.body.user_id
+  const decoded = await jwtHelper.verifyToken(
+    req.headers['x-access-token'],
+    accessTokenSecret
+  )
+  const accountDecode = decoded.data
+  const user_id = accountDecode.id
   // user phone want accept friend
   const user_id_want_accept = req.body.user_id_want_decline
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
@@ -198,7 +213,12 @@ const declineFriend = async (req, res) => {
 const deleteFriend = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   // user phone
-  const user_id = req.body.user_id
+  const decoded = await jwtHelper.verifyToken(
+    req.headers['x-access-token'],
+    accessTokenSecret
+  )
+  const accountDecode = decoded.data
+  const user_id = accountDecode.id
   // user phone want accept friend
   const user_id_want_delete = req.body.user_id_want_delete
 
@@ -444,7 +464,12 @@ const getSearchUserByPhone = async (req, res) => {
 const deletePhoneByIdCommon = async (req, res, typeCollection) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
   // user phone
-  const user_id = req.body.user_id
+  const decoded = await jwtHelper.verifyToken(
+    req.headers['x-access-token'],
+    accessTokenSecret
+  )
+  const accountDecode = decoded.data
+  const user_id = accountDecode.id
   // user phone want accept friend
   const user_id_want_delete = req.body.user_id_want_delete
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
@@ -536,7 +561,12 @@ const deletePhoneInUserPhoneBook = (req, res) => {
 
 const postSyncPhonebook = async (req, res) => {
   const errs = validationResult(req).formatWith(errorFormatter) // format chung
-  const value = req.body.user_id
+  const decoded = await jwtHelper.verifyToken(
+    req.headers['x-access-token'],
+    accessTokenSecret
+  )
+  const accountDecode = decoded.data
+  const user_id = accountDecode.id
   const list = req.body.listPhoneBook
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     // loc account co dk trong he thong
@@ -552,7 +582,7 @@ const postSyncPhonebook = async (req, res) => {
       // console.log(element)
       listAccountId.push(element.id)
     })
-    const result = await db.sequelize.query(`select * from public."UserPhoneBooks" where user_id='${value}'`)
+    const result = await db.sequelize.query(`select * from public."UserPhoneBooks" where user_id='${user_id}'`)
     // //da khoi tao
 
     if (typeof result[0][0] !== 'undefined') {
@@ -565,7 +595,7 @@ const postSyncPhonebook = async (req, res) => {
     } else {
       // chua khoi tao
       await userPhoneBook.create({
-        user_id: value,
+        user_id: user_id,
         user_phone_book_id: listAccountId
       })
       return res.status(200).send(new Response(false, CONSTANT.SYNC_SUCCESS, null))
