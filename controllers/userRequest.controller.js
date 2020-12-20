@@ -221,7 +221,7 @@ const deleteFriend = async (req, res) => {
   const user_id = accountDecode.id
   console.log('usser_id: ' + user_id)
   // user phone want accept friend
-  const user_id_want_delete = req.body.user_id_want_delete
+  const user_id_want_delete = req.query.user_id_want_delete
 
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const userContact = await UserContact.findOne({ where: { user_id: user_id } })
@@ -446,9 +446,9 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
   )
   const accountDecode = decoded.data
   const user_id = accountDecode.id
-  console.log(user_id)
+  console.log(user_id + 'test')
   // user phone want accept friend
-  const user_id_want_delete = req.body.user_id_want_delete
+  const user_id_want_delete = req.query.user_id_want_delete
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     if (typeCollection === 1) {
       const result = await db.sequelize.query(`SELECT * FROM public."UserRequests" WHERE user_id=${user_id}`)

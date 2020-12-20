@@ -3,7 +3,7 @@ const db = require('../models')
 const Account = db.account
 const CONSTANT = require('../constants/account.constants')
 const jwtHelper = require('../helpers/jwt.helper')
-const { check, header } = require('express-validator')
+const { check, header, query } = require('express-validator')
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 const validateAddFriend = () => {
   return [
@@ -128,16 +128,8 @@ const validateDeclineFriend = () => {
 const validatePhoneUserRequest = () => {
   return [
     check('phone', CONSTANT.PHONE_IS_REQUIRED).not().isEmpty(),
-    check('phone', CONSTANT.IS_PHONE).matches(/((09|03|07|08|05)+([0-9]{8})\b)/),
-    check('phone').custom((value, { req }) => {
-      return Account.findOne({
-        where: { phone: value }
-      }).then((account) => {
-        if (account === null) {
-          return Promise.reject(CONSTANT.USER_NOT_FOUND)
-        }
-      })
-    })
+    check('phone', CONSTANT.IS_PHONE).matches(/((09|03|07|08|05)+([0-9]{8})\b)/)
+
   ]
 }
 
@@ -244,8 +236,8 @@ const validateGetSearchFriendByPhone = () => {
 
 const validateDeletePhoneByIdUserRequest = () => {
   return [
-    check('user_id_want_delete', CONSTANT.USER_WANT_DELETE_IS_REQUIRED).not().isEmpty(),
-    check('user_id_want_delete').custom(async (value, { req }) => {
+    query('user_id_want_delete', CONSTANT.USER_WANT_DELETE_IS_REQUIRED).not().isEmpty(),
+    query('user_id_want_delete').custom(async (value, { req }) => {
       const decoded = await jwtHelper.verifyToken(
         req.headers['x-access-token'],
         accessTokenSecret
@@ -256,7 +248,7 @@ const validateDeletePhoneByIdUserRequest = () => {
         return Promise.reject(CONSTANT.USER_WANT_DELETE_IS_INVALID)
       }
     }),
-    check('user_id_want_delete').custom(async (value, { req }) => {
+    query('user_id_want_delete').custom(async (value, { req }) => {
       const decoded = await jwtHelper.verifyToken(
         req.headers['x-access-token'],
         accessTokenSecret
@@ -273,8 +265,8 @@ const validateDeletePhoneByIdUserRequest = () => {
 
 const validateDeletePhoneByIdUserContact = () => {
   return [
-    check('user_id_want_delete', CONSTANT.USER_WANT_DELETE_IS_REQUIRED).not().isEmpty(),
-    check('user_id_want_delete').custom(async (value, { req }) => {
+    query('user_id_want_delete', CONSTANT.USER_WANT_DELETE_IS_REQUIRED).not().isEmpty(),
+    query('user_id_want_delete').custom(async (value, { req }) => {
       const decoded = await jwtHelper.verifyToken(
         req.headers['x-access-token'],
         accessTokenSecret
@@ -285,7 +277,7 @@ const validateDeletePhoneByIdUserContact = () => {
         return Promise.reject(CONSTANT.USER_WANT_DELETE_IS_INVALID)
       }
     }),
-    check('user_id_want_delete').custom(async (value, { req }) => {
+    query('user_id_want_delete').custom(async (value, { req }) => {
       const decoded = await jwtHelper.verifyToken(
         req.headers['x-access-token'],
         accessTokenSecret
@@ -303,8 +295,8 @@ const validateDeletePhoneByIdUserContact = () => {
 const validateDeletePhoneByIdUserPhoneBook = () => {
   return [
 
-    check('user_id_want_delete', CONSTANT.USER_WANT_DELETE_IS_REQUIRED).not().isEmpty(),
-    check('user_id_want_delete').custom(async (value, { req }) => {
+    query('user_id_want_delete', CONSTANT.USER_WANT_DELETE_IS_REQUIRED).not().isEmpty(),
+    query('user_id_want_delete').custom(async (value, { req }) => {
       const decoded = await jwtHelper.verifyToken(
         req.headers['x-access-token'],
         accessTokenSecret
@@ -315,7 +307,7 @@ const validateDeletePhoneByIdUserPhoneBook = () => {
         return Promise.reject(CONSTANT.USER_WANT_DELETE_IS_INVALID)
       }
     }),
-    check('user_id_want_delete').custom(async (value, { req }) => {
+    query('user_id_want_delete').custom(async (value, { req }) => {
       const decoded = await jwtHelper.verifyToken(
         req.headers['x-access-token'],
         accessTokenSecret

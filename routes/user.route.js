@@ -29,11 +29,11 @@ router.get('/api/v0/users/getListContactId', userRequestValidator.validateGetFri
 
 router.get('/api/v0/users/searchUserByPhone', userRequestValidator.validateGetSearchFriendByPhone(), userRequestController.getSearchUserByPhone)
 
-router.delete('/api/v0/users/deletePhoneByIdRequest', userRequestValidator.validateDeletePhoneByIdUserRequest(), userRequestController.deletePhoneInUserRequest)
+router.delete('/api/v0/users/requests/deletePhone', userRequestValidator.validateDeletePhoneByIdUserRequest(), userRequestController.deletePhoneInUserRequest)
 
-router.delete('/api/v0/users/deletePhoneByIdContact', userRequestValidator.validateDeletePhoneByIdUserContact(), userRequestController.deletePhoneInUserContact)
+router.delete('/api/v0/users/contacts/deletePhone', userRequestValidator.validateDeletePhoneByIdUserContact(), userRequestController.deletePhoneInUserContact)
 
-router.delete('/api/v0/users/deletePhoneByIdPhoneBook', userRequestValidator.validateDeletePhoneByIdUserPhoneBook(), userRequestController.deletePhoneInUserPhoneBook)
+router.delete('/api/v0/users/phonebooks/deletePhone', userRequestValidator.validateDeletePhoneByIdUserPhoneBook(), userRequestController.deletePhoneInUserPhoneBook)
 
 router.post('/api/v0/users/syncPhoneBook', userRequestController.postSyncPhonebook)
 
