@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-const Response = require('../utils/response')
 const db = require('../models')
 const Account = db.account
 const UserRequest = db.userRequest
@@ -45,7 +44,9 @@ const addFriend = async (req, res) => {
         user_id: user_request_id,
         user_request_id: listUserRequest
       })
-      return res.status(200).send(new Response(false, CONSTANT.WAITING_USER_ACCEPT, null))
+      return res.status(200).send({
+        message: CONSTANT.WAITING_USER_ACCEPT
+      })
     } else {
       // da khoi tao
       userRequestFind.user_request_id.push(user_id)
@@ -54,11 +55,12 @@ const addFriend = async (req, res) => {
       }, {
         where: { id: userRequestFind.id }
       })
-      return res.status(200).send(new Response(false, CONSTANT.WAITING_USER_ACCEPT, null))
+      return res.status(200).send({
+        message: CONSTANT.WAITING_USER_ACCEPT
+      })
     }
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -66,12 +68,12 @@ const getALLlistUserRequest = async (req, res) => {
   try {
     const users = await UserRequest.findAll({
     })
-    return res.status(200).send(
-      new Response(false, CONSTANT.USER_LIST, users)
-    )
+    return res.status(200).send(users)
   } catch (_err) {
     console.log(_err)
-    return res.status(500).send(new Response(true, CONSTANT.SERVER_ERROR, null))
+    return res.status(500).send({
+      message: CONSTANT.SERVER_ERROR
+    })
   }
 }
 
@@ -146,9 +148,9 @@ const acceptFriend = async (req, res) => {
       })
     }
 
-    res.status(200).send(
-      new Response(false, CONSTANT.ACCEPT_SUCCESS, null)
-    )
+    res.status(200).send({
+      message: CONSTANT.ACCEPT_SUCCESS
+    })
 
     // // tao room chung vi ca 2 dieu kien tren deu thanh cong
     // room.create({
@@ -171,8 +173,7 @@ const acceptFriend = async (req, res) => {
     //     })
     // });
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -201,12 +202,11 @@ const declineFriend = async (req, res) => {
         id: userRequest.id
       }
     })
-    return res.status(200).send(
-      new Response(false, CONSTANT.USER_DECLINE_UPDATE_SUCCESS, null)
-    )
+    return res.status(200).send({
+      message: CONSTANT.USER_DECLINE_UPDATE_SUCCESS
+    })
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -217,8 +217,9 @@ const deleteFriend = async (req, res) => {
     req.headers['x-access-token'],
     accessTokenSecret
   )
-  const accountDecode = decoded.data
+  const accountDecode = await decoded.data
   const user_id = accountDecode.id
+  console.log('usser_id: ' + user_id)
   // user phone want accept friend
   const user_id_want_delete = req.body.user_id_want_delete
 
@@ -254,12 +255,11 @@ const deleteFriend = async (req, res) => {
         id: userContactDelete.id
       }
     })
-    return res.status(200).send(
-      new Response(false, CONSTANT.USER_DELETE_UPDATE_SUCCESS, null)
-    )
+    return res.status(200).send({
+      message: CONSTANT.USER_DELETE_UPDATE_SUCCESS
+    })
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -269,20 +269,17 @@ const getListFriendRequestByPhoneUser = async (req, res) => {
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const result = await db.sequelize.query(`select ${fieldAllowInJson} from public."Accounts" a join public."UserRequests" b on a.id = b.user_id where a.phone='${user_phone}'`)
     if (typeof result[0][0] === 'undefined') {
-      return res.status(200).send(
-        new Response(false, CONSTANT.DONT_HAVE_ANY_FRIEND_REQUEST, null)
-      )
+      return res.status(200).send({
+        message: CONSTANT.DONT_HAVE_ANY_FRIEND_REQUEST
+      })
     }
     // console.log(result[0][0].user_request_id);
     const listUserFound = await Account.findAll({
       where: { id: result[0][0].user_request_id }
     })
-    return res.status(200).send(
-      new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
-    )
+    return res.status(200).send(listUserFound)
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -293,19 +290,16 @@ const getListFriendContactByPhoneUser = async (req, res) => {
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const result = await db.sequelize.query(`select ${fieldAllowInJson} from public."Accounts" a join public."UserContacts" b on a.id = cast(b.user_id as int) where a.phone='${user_phone}'`)
     if (typeof result[0][0] === 'undefined') {
-      return res.status(200).send(
-        new Response(false, CONSTANT.DONT_HAVE_ANY_FRIEND_CONTACT, null)
-      )
+      return res.status(200).send({
+        message: CONSTANT.DONT_HAVE_ANY_FRIEND_CONTACT
+      })
     }
     const listUserFound = await Account.findAll({
       where: { id: result[0][0].friend_id }
     })
-    return res.status(200).send(
-      new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
-    )
+    return res.status(200).send(listUserFound)
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -316,20 +310,17 @@ const getListPhoneBookByPhoneUser = async (req, res) => {
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const result = await db.sequelize.query(`select ${fieldAllowInJson} from public."Accounts" a join public."UserPhoneBooks" b on a.id = cast(b.user_id as int) where a.phone='${user_phone}'`)
     if (typeof result[0][0] === 'undefined') {
-      return res.status(200).send(
-        new Response(false, CONSTANT.DONT_HAVE_ANY_FRIEND_BOOK, null)
-      )
+      return res.status(200).send({
+        message: CONSTANT.DONT_HAVE_ANY_FRIEND_BOOK
+      })
     }
     // console.log(result[0][0].user_request_id);
     const listUserFound = await Account.findAll({
       where: { id: result[0][0].user_phone_book_id }
     })
-    return res.status(200).send(
-      new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
-    )
+    return res.status(200).send(listUserFound)
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -341,17 +332,12 @@ const getTextSearch = async (req, res) => {
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const result = await db.sequelize.query(`SELECT ${fieldAllowInJson} FROM public."Accounts" WHERE phone like '${value}%' or name like '${value}%' or  email like '${value}%'`)
     if (typeof result[0][0] === 'undefined') {
-      return res.status(200).send(
-        new Response(false, CONSTANT.USER_NOT_FOUND, [])
-      )
+      return res.status(200).send([])
     } else {
-      return res.status(200).send(
-        new Response(false, CONSTANT.FIND_SUCCESS, result[0])
-      )
+      return res.status(200).send(result[0])
     }
   } else {
-    const response = new Response(false, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -373,12 +359,9 @@ const getListPhoneBookById = async (req, res) => {
         exclude: ['password']
       }
     })
-    return res.status(200).send(
-      new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
-    )
+    return res.status(200).send(listUserFound)
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -400,12 +383,9 @@ const getListRequestByUserId = async (req, res) => {
         exclude: ['password']
       }
     })
-    return res.status(200).send(
-      new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
-    )
+    return res.status(200).send(listUserFound)
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -428,12 +408,9 @@ const getListFriendContactById = async (req, res) => {
         exclude: ['password']
       }
     })
-    return res.status(200).send(
-      new Response(false, CONSTANT.FIND_SUCCESS, listUserFound)
-    )
+    return res.status(200).send(listUserFound)
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -444,13 +421,12 @@ const getSearchUserByPhone = async (req, res) => {
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
     const result = await db.sequelize.query(`SELECT ${fieldAllowInJson} FROM public."Accounts" WHERE phone @@ to_tsquery('${value}:*')`)
     if (typeof result[0][0] === 'undefined') {
-      return res.status(200).send(new Response(false, CONSTANT.FIND_SUCCESS, []))
+      return res.status(200).send([])
     } else {
-      return res.status(200).send(new Response(false, CONSTANT.FIND_SUCCESS, result[0][0]))
+      return res.status(200).send(result[0][0])
     }
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -470,6 +446,7 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
   )
   const accountDecode = decoded.data
   const user_id = accountDecode.id
+  console.log(user_id)
   // user phone want accept friend
   const user_id_want_delete = req.body.user_id_want_delete
   if (typeof errs.array() === 'undefined' || errs.array().length === 0) {
@@ -487,9 +464,9 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
           id: result[0][0].id
         }
       })
-      return res.status(200).send(
-        new Response(false, CONSTANT.DELETE_PHONE_BY_ID_REQUEST_SUCCESS, null)
-      )
+      return res.status(200).send({
+        message: CONSTANT.DELETE_PHONE_BY_ID_REQUEST_SUCCESS
+      })
     }
     if (typeCollection === 2) {
       const result = await db.sequelize.query(`SELECT * FROM public."UserContacts" WHERE user_id='${user_id}'`)
@@ -519,9 +496,9 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
           id: resultUserTwo[0][0].id
         }
       })
-      return res.status(200).send(
-        new Response(false, CONSTANT.DELETE_PHONE_BY_ID_CONTACT_SUCCESS, null)
-      )
+      return res.status(200).send({
+        message: CONSTANT.DELETE_PHONE_BY_ID_CONTACT_SUCCESS
+      })
     }
     if (typeCollection === 3) {
       const result = await db.sequelize.query(`SELECT * FROM public."UserPhoneBooks" WHERE user_id='${user_id}'`)
@@ -537,13 +514,12 @@ const deletePhoneByIdCommon = async (req, res, typeCollection) => {
           id: result[0][0].id
         }
       })
-      return res.status(200).send(
-        new Response(false, CONSTANT.DELETE_PHONE_BY_ID_PHONEBOOK_SUCCESS, null)
-      )
+      return res.status(200).send({
+        message: CONSTANT.DELETE_PHONE_BY_ID_PHONEBOOK_SUCCESS
+      })
     }
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -591,18 +567,21 @@ const postSyncPhonebook = async (req, res) => {
       }, {
         where: { id: result[0][0].id }
       })
-      return res.status(200).send(new Response(false, CONSTANT.SYNC_SUCCESS, null))
+      return res.status(200).send({
+        message: CONSTANT.SYNC_SUCCESS
+      })
     } else {
       // chua khoi tao
       await userPhoneBook.create({
         user_id: user_id,
         user_phone_book_id: listAccountId
       })
-      return res.status(200).send(new Response(false, CONSTANT.SYNC_SUCCESS, null))
+      return res.status(200).send({
+        message: CONSTANT.SYNC_SUCCESS
+      })
     }
   } else {
-    const response = new Response(true, CONSTANT.INVALID_VALUE, errs.array())
-    res.status(400).send(response)
+    res.status(400).send(errs.array())
   }
 }
 
@@ -614,7 +593,7 @@ const getUserSentRequest = async (req, res) => {
   const accountDecode = decoded.data
   const userId = accountDecode.id
   const result = await db.sequelize.query(`SELECT a.id, a.phone, a.email, a.name, a.avatar, a.role FROM "Accounts" a left join "UserRequests" b on a.id=b.user_id where ${userId}=ANY(user_request_id);`)
-  res.status(200).send(new Response(false, CONSTANT.FIND_SUCCESS, result[0]))
+  res.status(200).send(result[0])
 }
 
 module.exports = {
