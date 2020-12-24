@@ -3,9 +3,10 @@
 This is application phonebook management
 # # Demo: 
 CHAT: `http://zolavn.cf`
+
 # # Frontend Project
-- Web application: `https://gitlab.com/chatonline/zola-client`
-- Mobile application: `https://gitlab.com/chatonline/mobile-fe`
+- Web application: `https://github.com/chatonline/zola-client`
+- Mobile application: `https://github.com/thanhtung5598/Mobile-FE-Zola.git`
 
 If registration doesn't work because of running out of money, create an account with admin
 - Admin Page `https://admin.zolavn.cf` 
@@ -20,11 +21,11 @@ If registration doesn't work because of running out of money, create an account 
 3. Npm: See [Here](https://www.npmjs.com/)
 ### Run with api gateway (Microservice)
 
-See: [API-Gateway](https://gitlab.com/dlmtruong1609/api-gateway-realestate)
+See: [API-Gateway](https://github.com/dlmtruong1609/api-gateway-chat)
 
 ### Or Run single
-1. `git clone https://gitlab.com/chatonline/api-phonebook-chat.git`
-2. `cd api-phonebook-chat`
+1. `git clone https://github.com/dlmtruong1609/api-phonebook-chat`
+2.  `cd api-phonebook-chat`
 3. `npm install`
 4. Change info in .env with env.example
 5. `npm run dev` with dev or `npm start` with pm2 
